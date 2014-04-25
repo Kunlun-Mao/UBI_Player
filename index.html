@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Untitled Document</title>
+<script src='cordova.js'></script>
+</head>
+
+<body>
+10.44
+<script>
+	DemoPlayerBluetoothAddress = "A8:06:00:C2:11:8C";
+	init = function() {
+		bluetoothSerial.isEnabled(function() {
+			console.log('bluetooth is enabled');
+			bluetoothSerial.list(function(list) {
+				console.log('The Bluetooth device list:');
+				console.log(list);
+				// check the demo player is paired with the client
+				var demoPlayerFound = false;
+				for (var i = 0; i < list.length; i++) {
+					console.log(list[i].address);
+					if (list[i].address == DemoPlayerBluetoothAddress) {
+						demoPlayerFound = true;
+						break;	
+					}
+				};
+				if (demoPlayerFound) { 
+					console.log('Demo player paided verified.');
+					bluetoothSerial.connect(DemoPlayerBluetoothAddress, function() {
+						console.log('Bluetooth player connect succeed');
+					}, function(re) {
+						console.error('Bluetooth connect error.');
+						console.error(re);
+						alert('Bluetooth connect error.');
+					});
+				} else {
+					console.error('Demo player not paied.');
+					alert('Demo player not paied.');
+					return;	
+				}
+			}, function() {
+				console.error('Bluetooth list error.');
+				alert('Bluetooth list error.');	
+			});	
+		}, function() {
+			console.error('Bluetooth is not enabled.');
+			alert('Bluetooth is not enabled.');	
+		});
+	}
+</script>
+</body>
+</html>
