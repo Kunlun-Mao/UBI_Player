@@ -1,15 +1,16 @@
 <!doctype html>
 <html>
 <head>
+<!-- Player Index.html -->
 <meta charset="utf-8">
 <title>Untitled Document</title>
 <script src='cordova.js'></script>
 </head>
 
 <body>
-10.44
+Player
 <script>
-	DemoPlayerBluetoothAddress = "A8:06:00:C2:11:8C";
+	DemoClientBluetoothAddress = "BC:F5:AC:35:E2:B3";
 	init = function() {
 		bluetoothSerial.isEnabled(function() {
 			console.log('bluetooth is enabled');
@@ -20,14 +21,14 @@
 				var demoPlayerFound = false;
 				for (var i = 0; i < list.length; i++) {
 					console.log(list[i].address);
-					if (list[i].address == DemoPlayerBluetoothAddress) {
+					if (list[i].address == DemoClientBluetoothAddress) {
 						demoPlayerFound = true;
 						break;	
 					}
 				};
 				if (demoPlayerFound) { 
-					console.log('Demo player paided verified.');
-					bluetoothSerial.connect(DemoPlayerBluetoothAddress, function() {
+					console.log('Demo client paided verified.');
+					bluetoothSerial.connect(DemoClientBluetoothAddress, function() {
 						console.log('Bluetooth player connect succeed');
 					}, function(re) {
 						console.error('Bluetooth connect error.');
