@@ -5,13 +5,22 @@
 <meta charset="utf-8">
 <title>Untitled Document</title>
 <script src='cordova.js'></script>
+<style>
+#SongName {
+	text-decoration: underline;
+	cursor: pointer;
+}
+</style>
 </head>
 
 <body>
 Player
+<div><audio id='AudioNode' src=""></audio></div>
+<div id='SongList'></div>
 <script>
+	/* Bluetooth Part */
 	DemoClientBluetoothAddress = "BC:F5:AC:35:E2:B3";
-	init = function() {
+	BluetoothInit = function() {
 		bluetoothSerial.isEnabled(function() {
 			console.log('bluetooth is enabled');
 			bluetoothSerial.list(function(list) {
@@ -48,7 +57,66 @@ Player
 			console.error('Bluetooth is not enabled.');
 			alert('Bluetooth is not enabled.');	
 		});
+		
+		bluetoothSerial.subscribe('\n', function(data) {
+			if (data == 'undo') {
+				undo();
+			} else {
+				addSong(data);	
+			}
+		}, function() {});
+	};
+</script>
+<script>
+	/* Code for Internet Channel */
+	CometAjax = function() {
+		$.ajax('maokunlun.me.uk?action=pop', {
+			type: 'GET',
+			dataType: 'json'	
+		}).done(function(data) {
+			addSong(data);
+			CometAjax();	
+		});
+	};
+	setTimeout(CometAjax, 3000);
+</script>
+<script>	
+	SongList = [];
+	addSong = function(id) {
+		if (id != 'undo') {
+			SongList[SongList.length] = id;
+		};
+		if (id == 'undo') undo();	
+	};
+	undo = function() {SongList.pop()};
+	SongNames = {
+		'1': 'Divergence',
+		'2': 'Afrojack - Peanuts',
+		'3': 'ElektroCity',
+		'4': 'Stiller',
+		'5': 'Alpha',
+		'6': 'Daniel Lex',
+		'7': 'Powerball'
+	};
+	LoopSongListUpdate = function() {
+		$('#SongList').empty();
+		SongList.forEach(function(item) {
+			$('#SongList').append("<div class='SongName' data-song-id='"+id+"'>" + SongNames[id] + "</div>");
+		});	
+		$('#SongName').click(function(evt) {
+			var url = "https://s3-us-west-2.amazonaws.com/maokunlun-ubi/" + $(evt.target).data('song-id') + ".mp3";
+			$('#AudioNode').attr('src', url);
+			document.getElementById('AudioNode').play();
+			$(evt.target).remove();
+		});
 	}
+</script>
+<script>
+ /* NFC part */
+ nfc.addTagDiscoveredListener(function(evt) {
+	 addSong(evt.tag);
+ });
+
 </script>
 </body>
 </html>
